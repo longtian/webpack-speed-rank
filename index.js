@@ -15,6 +15,8 @@ function RankPlugin(cb, redis_options) {
   this.callback = cb || console.log.bind(console);
   if (redis_options) {
     this.redis_client = redis.createClient(redis_options);
+  }else{
+    this.redis_client = redis.createClient();
   }
 }
 

@@ -3,6 +3,6 @@
  */
 describe('webpack-speed-rank', function () {
   it('should work', function () {
-    // todo
+    // todo webpack and redis needs to be mocked
   });
 });
