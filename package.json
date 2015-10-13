@@ -1,0 +1,25 @@
+{
+  "name": "webpack-speed-rank",
+  "version": "1.0.0",
+  "description": "Speed rank for webpack build",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wyvernnot/webpack-speed-rank.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wyvernnot/webpack-speed-rank/issues"
+  },
+  "homepage": "https://github.com/wyvernnot/webpack-speed-rank#readme",
+  "devDependencies": {
+    "mocha": "^2.3.3"
+  },
+  "dependencies": {
+    "redis": "^2.2.1"
+  }
+}
