@@ -1,4 +1,8 @@
 # webpack-speed-rank
+![](https://img.shields.io/npm/v/webpack-speed-rank.svg)
+![](https://img.shields.io/npm/dm/webpack-speed-rank.svg)
+![](https://img.shields.io/npm/l/webpack-speed-rank.svg)
+
 Speed rank for webpack build
 
 Do you want to know how slow is your build compared to others? Install this plugin and it will tell you.
