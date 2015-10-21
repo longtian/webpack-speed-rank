@@ -3,6 +3,10 @@
  */
 var redis = require('redis');
 
+var noop = function () {
+  // just an empty function
+};
+
 /**
  *
  * @param cb success callback
@@ -12,18 +16,14 @@ var redis = require('redis');
 function RankPlugin(cb, redis_options) {
   "use strict";
 
-  this.callback = cb || console.log.bind(console);
-  if (redis_options) {
-    this.redis_client = redis.createClient(redis_options);
-  }else{
-    this.redis_client = redis.createClient();
-  }
+  this.callback = cb || noop;
+  this.redis_options = redis_options;
 }
 
 RankPlugin.prototype.apply = function (compiler) {
   "use strict";
 
-  var _this = this;
+  var self = this;
 
   var onceHandler = function (stat) {
 
@@ -36,24 +36,26 @@ RankPlugin.prototype.apply = function (compiler) {
       duration: duration,
     };
 
-    if (_this.redis_client) {
-      var client = _this.redis_client;
+    var client = redis.createClient(self.redis_options);
+
+    client.on('ready', function () {
       client.zadd('score', duration, id, function () {
         client.zcard('score', function (err, count) {
           client.zrevrank('score', id, function (err, rank) {
-            // count
-            // rank
             result.rank = rank / count * 100;
-            _this.callback.call(compiler, result);
-            client.end();
-            onceHandler = function () {
-            };
+            self.callback.call(compiler, result);
+            //client.end();
           });
         });
       });
-    } else {
-      _this.callback.call(compiler, result);
-    }
+    });
+
+    // in case of error
+    client.on('error', function () {
+      self.callback.call(compiler, result);
+    });
+
+    onceHandler = noop;
   };
 
 
