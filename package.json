@@ -1,6 +1,6 @@
 {
   "name": "webpack-speed-rank",
-  "version": "0.0.10",
+  "version": "0.1.0",
   "description": "Speed rank for webpack build",
   "main": "index.js",
   "scripts": {
