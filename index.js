@@ -2,21 +2,18 @@
  * Created by wyvernnot on 15-10-13.
  */
 var redis = require('redis');
-
-var noop = function () {
-  // just an empty function
-};
+var once = require('once');
 
 /**
  *
- * @param cb success callback
- * @param redis_options redis connection options
+ * @param redis_options redis connection options or connection string
+ * @param callback
  * @constructor
  */
-function RankPlugin(cb, redis_options) {
+function RankPlugin(redis_options, cb) {
   "use strict";
 
-  this.callback = cb || noop;
+  this.callback = cb || console.log.bind(console);
   this.redis_options = redis_options;
 }
 
@@ -36,14 +33,17 @@ RankPlugin.prototype.apply = function (compiler) {
       duration: duration,
     };
 
-    var client = redis.createClient(self.redis_options);
+    var client = redis.createClient(self.redis_options, {
+      connect_timeout: 5000,
+      max_attempts: 1
+    });
 
     client.on('ready', function () {
       client.zadd('score', duration, id, function () {
         client.zcard('score', function (err, count) {
           client.zrevrank('score', id, function (err, rank) {
             result.rank = rank / count * 100;
-            self.callback.call(compiler, result);
+            self.callback.call(compiler, null, result);
             //client.end();
           });
         });
@@ -51,17 +51,13 @@ RankPlugin.prototype.apply = function (compiler) {
     });
 
     // in case of error
-    client.on('error', function () {
-      self.callback.call(compiler, result);
+    client.on('error', function (err) {
+      self.callback.call(compiler, err);
     });
 
-    onceHandler = noop;
   };
 
-
-  compiler.plugin('done', function () {
-    onceHandler.apply(this, arguments);
-  });
+  compiler.plugin('done', once(onceHandler));
 };
 
 module.exports = RankPlugin;

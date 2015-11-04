@@ -7,14 +7,21 @@ var assert = require('assert');
 
 describe('webpack-speed-rank', function () {
 
-  // redis is not running at localhost:6379
+  // redis is not running at localhost:16758
   it('should work if redis is not available', function (done) {
-    function resultHandler(result) {
-      assert.ok(!result.rank);
+    function resultHandler(error,result) {
+      assert.ok(!result);
       done();
     }
 
-    var pl = new RankPlugin(resultHandler, {port: 16758});
+    var pl = new RankPlugin({port: 16758}, resultHandler);
+    pl.apply(compiler);
+  });
+
+  // redis is not running at localhost:6379
+  it('should work if redis is not available', function () {
+
+    var pl = new RankPlugin({port: 16758});
     pl.apply(compiler);
   });
 });
