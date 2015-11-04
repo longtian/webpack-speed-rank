@@ -2,6 +2,8 @@
 ![](https://img.shields.io/npm/v/webpack-speed-rank.svg)
 ![](https://img.shields.io/npm/dm/webpack-speed-rank.svg)
 ![](https://img.shields.io/npm/l/webpack-speed-rank.svg)
+![](https://img.shields.io/travis/wyvernnot/webpack-speed-rank.svg)
+![](https://img.shields.io/coveralls/wyvernnot/webpack-speed-rank.svg)
 
 Speed rank for webpack build
 
@@ -14,13 +16,28 @@ For example, you can show customized infomation in console like this:
 
 ## Documents
 
-`RankPlugin(callback,redisOptions)`
+`RankPlugin(redisOptions,callback)`
 
 Parameters:
 
-`callback(stat)` (required)
+`redisOptions`
 
-stat is an object
+```
+{
+ host:'127.0.0.1',
+ port:6379
+}
+```
+
+or 
+
+```
+redis://localhost:6379
+```
+
+`callback(error,stats)`
+
+stats is an object looking like this
 
 ```
 {
@@ -31,7 +48,7 @@ rank: // rank percentage
 }
 ```
 
-`redisOptions` (optional)
+## Dependency
 
 `webpack-speed-rank` relies on Redis server, by default it will connect to localhost:6379
 
@@ -43,12 +60,12 @@ Modify you webpack configuration file
 
  plugins:[
   ...
-  ,new RankPlugin(function (e) {
-    console.log('耗时 %d ms,打败了 %d % 的build', e.duration, e.rank);
-    }, {
-    host:'127.0.0.1',
-    port: 6379
-  })
+  ,new RankPlugin({
+                    host:'127.0.0.1',
+                    port: 6379
+                  },function (e,stats) {
+                      console.log('耗时 %d ms,打败了 %d % 的build', stats.duration, stats.rank);
+                  });
  ]
  
 ```
