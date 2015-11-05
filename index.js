@@ -38,13 +38,15 @@ RankPlugin.prototype.apply = function (compiler) {
       max_attempts: 1
     });
 
+    // the process can exit if no more commands to sent
+    client.unref();
+
     client.on('ready', function () {
       client.zadd('score', duration, id, function () {
         client.zcard('score', function (err, count) {
           client.zrevrank('score', id, function (err, rank) {
             result.rank = rank / count * 100;
             self.callback.call(compiler, null, result);
-            //client.end();
           });
         });
       });
